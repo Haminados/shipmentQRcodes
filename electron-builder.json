@@ -1,0 +1,27 @@
+{
+  "appId": "com.barcode.pdfgenerator",
+  "productName": "PDF Generator",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist/**/*",
+    "dist-electron/**/*"
+  ],
+  "extraResources": [
+    {
+      "from": "assets",
+      "to": "assets",
+      "filter": ["**/*"]
+    }
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "dir",
+        "arch": ["x64"]
+      }
+    ]
+  },
+  "forceCodeSigning": false
+}

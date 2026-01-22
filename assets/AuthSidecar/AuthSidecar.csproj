@@ -1,0 +1,26 @@
+<!-- AuthSidecar/AuthSidecar.csproj -->
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+  <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
+  <PackageReference Include="Dapper" Version="2.1.35" />
+  <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+
+  <!-- נועל את משפחת Identity לגרסאות שדרושות ע"י SqlClient/OIDC -->
+  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+  <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
+  <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.14.0" />
+  <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="8.14.0" />
+  <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.14.0" />
+  <PackageReference Include="Microsoft.IdentityModel.Logging" Version="8.14.0" />
+  <PackageReference Include="Microsoft.IdentityModel.Abstractions" Version="8.14.0" />
+</ItemGroup>
+</Project>
