@@ -13,8 +13,6 @@ import PreviewModal from './components/PreviewModal';
 
 import type { ShipmentData, EquipmentRow } from './types';
 import {
-  buildShipmentPayload,
-  buildEquipmentPayload,
   buildSingleRowPayload,
   generateQrDataUrl,
 } from './utils/qrGenerator';
@@ -88,20 +86,13 @@ const App: React.FC = () => {
   // Generate HTML for PDF/Preview
   const generateHtml = useCallback(async (): Promise<string> => {
     // Generate QRs
-    const shipmentPayload = buildShipmentPayload(shipment);
-
-    // Generate main QRs and per-row QRs
     const rowQrPromises = equipment.map(row =>
       generateQrDataUrl(buildSingleRowPayload(row))
     );
 
-    const [shipmentQr, equipmentQr, ...rowQrs] = await Promise.all([
-      generateQrDataUrl(shipmentPayload),
-      generateQrDataUrl(buildEquipmentPayload(equipment)),
-      ...rowQrPromises
-    ]);
+    const rowQrs = await Promise.all(rowQrPromises);
 
-    return generatePdfHtml(shipment, equipment, shipmentQr, equipmentQr, rowQrs, logos);
+    return generatePdfHtml(shipment, equipment, rowQrs, logos);
   }, [shipment, equipment, logos]);
 
   // Handle PDF generation

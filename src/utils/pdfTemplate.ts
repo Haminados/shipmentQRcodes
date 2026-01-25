@@ -17,8 +17,6 @@ interface LogoUrls {
 export function generatePdfHtml(
   shipment: ShipmentData,
   equipment: EquipmentRow[],
-  shipmentQrDataUrl: string,
-  equipmentQrDataUrl: string,
   rowQrDataUrls: string[],
   logos: LogoUrls
 ): string {
@@ -273,56 +271,6 @@ export function generatePdfHtml(
       border-radius: 0 0 0 6px;
     }
     
-    /* === QR SECTION === */
-    .qr-section {
-      display: flex;
-      justify-content: center;
-      gap: 60px;
-      margin-top: 25px;
-      padding: 20px;
-      background: linear-gradient(135deg, #f8fafc 0%, #e8f4f8 100%);
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
-    }
-    
-    .qr-box {
-      text-align: center;
-    }
-    
-    .qr-box-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #0f4c75;
-      margin-bottom: 10px;
-      padding: 6px 16px;
-      background: linear-gradient(90deg, #0f4c75 0%, #3282b8 100%);
-      color: #fff;
-      border-radius: 20px;
-      display: inline-block;
-    }
-    
-    .qr-container {
-      display: inline-block;
-      padding: 12px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border: 2px solid #e8f4f8;
-    }
-    
-    .qr-image {
-      width: 110px;
-      height: 110px;
-      display: block;
-    }
-    
-    .qr-label-en {
-      font-size: 9px;
-      color: #666;
-      margin-top: 8px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-    }
     
     /* === FOOTER === */
     .footer {
@@ -422,23 +370,6 @@ export function generatePdfHtml(
       </div>
     </div>
     
-    <!-- QR Codes Section -->
-    <div class="qr-section">
-      <div class="qr-box">
-        <div class="qr-box-label">ברקוד משלוח</div>
-        <div class="qr-container">
-          <img src="${shipmentQrDataUrl}" alt="Shipment QR" class="qr-image" />
-        </div>
-        <div class="qr-label-en">SHIPMENT STICKER</div>
-      </div>
-      <div class="qr-box">
-        <div class="qr-box-label">ברקוד ציוד</div>
-        <div class="qr-container">
-          <img src="${equipmentQrDataUrl}" alt="Equipment QR" class="qr-image" />
-        </div>
-        <div class="qr-label-en">EQUIPMENT STICKER</div>
-      </div>
-    </div>
     
     <!-- Footer -->
     <div class="footer">
