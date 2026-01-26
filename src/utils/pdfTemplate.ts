@@ -4,6 +4,7 @@ interface LogoUrls {
   logoLeft1: string;
   logoLeft2: string;
   logoRight: string;
+  logoRight2: string;
 }
 
 /**
@@ -49,6 +50,10 @@ export function generatePdfHtml(
 
   const logoRightHtml = logos.logoRight
     ? `<img src="${logos.logoRight}" alt="Logo" class="header-logo" />`
+    : `<div class="logo-placeholder">LOGO</div>`;
+
+  const logoRight2Html = logos.logoRight2
+    ? `<img src="${logos.logoRight2}" alt="Logo" class="header-logo" />`
     : `<div class="logo-placeholder">LOGO</div>`;
 
   return `<!DOCTYPE html>
@@ -100,6 +105,7 @@ export function generatePdfHtml(
     
     .header-logos-right {
       display: flex;
+      gap: 12px;
       align-items: center;
     }
     
@@ -308,6 +314,7 @@ export function generatePdfHtml(
     <div class="header">
       <div class="header-logos-right">
         ${logoRightHtml}
+        ${logoRight2Html}
       </div>
       <div class="header-title">
         <h1>תעודת משלוח וציוד</h1>

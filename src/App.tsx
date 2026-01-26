@@ -46,21 +46,24 @@ const App: React.FC = () => {
     logoLeft1: '',
     logoLeft2: '',
     logoRight: '',
+    logoRight2: '',
   });
 
   // Load logos on mount
   useEffect(() => {
     const loadLogos = async () => {
       try {
-        const [left1, left2, right] = await Promise.all([
+        const [left1, left2, right, right2] = await Promise.all([
           window.stickerApi.getAssetDataUrl('logo_left_1.png'),
           window.stickerApi.getAssetDataUrl('logo_left_2.png'),
           window.stickerApi.getAssetDataUrl('logo_right.png'),
+          window.stickerApi.getAssetDataUrl('logo_right2.png'),
         ]);
         setLogos({
           logoLeft1: left1,
           logoLeft2: left2,
           logoRight: right,
+          logoRight2: right2,
         });
       } catch (error) {
         console.error('Error loading logos:', error);
