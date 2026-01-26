@@ -32,13 +32,13 @@ interface EquipmentTableProps {
 // Column definitions in display order (RTL)
 const columns: EquipmentColumn[] = [
   { key: 'rowNum', header: 'מס"ד', width: '60px' },
-  { key: 'manufacturerNum', header: 'מס\' יצרן', width: '90px' },
-  { key: 'manufacturerName', header: 'שם יצרן', width: '100px' },
+  { key: 'manufacturerNum', header: 'מס\' יצרן *', width: '90px' },
+  { key: 'manufacturerName', header: 'שם יצרן *', width: '100px' },
   { key: 'equipmentVersion', header: 'גרסת הציוד', width: '90px' },
   { key: 'idfCatalog', header: 'מק"ט צהלי', width: '100px' },
   { key: 'serialNum', header: 'מס\' סיריאלי', width: '100px' },
   { key: 'purchaseQty', header: 'כמות רכש', width: '80px' },
-  { key: 'testQty', header: 'כמות לבדיקה', width: '80px' },
+  { key: 'testQty', header: 'כמות לבדיקה *', width: '80px' },
   { key: 'purchaseOrder', header: 'הזמנת רכש', width: '100px' },
 ];
 
@@ -261,6 +261,10 @@ const EquipmentTable: React.FC<EquipmentTableProps> = ({
                               fontSize: '13px',
                             },
                           }}
+                          error={
+                            (col.key === 'manufacturerNum' || col.key === 'manufacturerName' || col.key === 'testQty') &&
+                            row[col.key].trim() === ''
+                          }
                         />
                       </TableCell>
                     ))}

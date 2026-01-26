@@ -22,12 +22,21 @@ const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, onChange }) => {
     onChange({ ...shipment, [field]: e.target.value });
   };
 
+  const handleCustomerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only numbers and max 3 digits
+    if (/^\d{0,3}$/.test(value)) {
+      onChange({ ...shipment, customer: value });
+    }
+  };
+
   const handleClear = () => {
     onChange({
       shipmentNumber: '',
       customer: '',
       supplyDate: '',
-      poc: '',
+      pocName: '',
+      pocPhone: '',
     });
   };
 
@@ -88,9 +97,10 @@ const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, onChange }) => {
               fullWidth
               label="לקוח"
               value={shipment.customer}
-              onChange={handleChange('customer')}
+              onChange={handleCustomerChange}
               required
-              placeholder="הזן שם לקוח"
+              placeholder="3 ספרות בלבד"
+              inputProps={{ maxLength: 3, inputMode: 'numeric' }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
@@ -108,15 +118,24 @@ const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, onChange }) => {
           <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
-              label="פרטי POC"
-              value={shipment.poc}
-              onChange={handleChange('poc')}
-              placeholder="הזן פרטי איש קשר (אופציונלי)"
+              label="POC - שם"
+              value={shipment.pocName}
+              onChange={handleChange('pocName')}
+              placeholder="שם איש קשר"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              fullWidth
+              label="POC - טלפון"
+              value={shipment.pocPhone}
+              onChange={handleChange('pocPhone')}
+              placeholder="טלפון איש קשר"
             />
           </Grid>
         </Grid>
       </CardContent>
-    </Card>
+    </Card >
   );
 };
 

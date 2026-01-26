@@ -8,8 +8,10 @@ export interface ShipmentData {
   customer: string;
   /** מועד אספקת ציוד - Supply date in DD/MM/YYYY format (required) */
   supplyDate: string;
-  /** פרטי POC - Point of contact (optional) */
-  poc: string;
+  /** פרטי POC - Name (optional) */
+  pocName: string;
+  /** פרטי POC - Phone (optional) */
+  pocPhone: string;
 }
 
 /**

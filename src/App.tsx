@@ -13,6 +13,7 @@ import PreviewModal from './components/PreviewModal';
 
 import type { ShipmentData, EquipmentRow } from './types';
 import {
+  buildShipmentPayload,
   buildSingleRowPayload,
   generateQrDataUrl,
 } from './utils/qrGenerator';
@@ -24,7 +25,8 @@ const App: React.FC = () => {
     shipmentNumber: '',
     customer: '',
     supplyDate: '',
-    poc: '',
+    pocName: '',
+    pocPhone: '',
   });
 
   // Equipment state
@@ -43,27 +45,21 @@ const App: React.FC = () => {
 
   // Logo data URLs
   const [logos, setLogos] = useState({
-    logoLeft1: '',
     logoLeft2: '',
     logoRight: '',
-    logoRight2: '',
   });
 
   // Load logos on mount
   useEffect(() => {
     const loadLogos = async () => {
       try {
-        const [left1, left2, right, right2] = await Promise.all([
-          window.stickerApi.getAssetDataUrl('logo_left_1.png'),
+        const [left2, right] = await Promise.all([
           window.stickerApi.getAssetDataUrl('logo_left_2.png'),
           window.stickerApi.getAssetDataUrl('logo_right.png'),
-          window.stickerApi.getAssetDataUrl('logo_right2.png'),
         ]);
         setLogos({
-          logoLeft1: left1,
           logoLeft2: left2,
           logoRight: right,
-          logoRight2: right2,
         });
       } catch (error) {
         console.error('Error loading logos:', error);
@@ -78,24 +74,35 @@ const App: React.FC = () => {
     shipment.customer.trim() !== '' &&
     shipment.supplyDate.trim() !== '';
 
+  const areEquipmentRowsValid = equipment.every((row) =>
+    row.manufacturerName.trim() !== '' &&
+    row.manufacturerNum.trim() !== '' &&
+    row.testQty.trim() !== ''
+  );
+
   const hasEquipmentData = equipment.some((row) =>
     Object.entries(row)
       .filter(([key]) => key !== 'id')
       .some(([, value]) => String(value).trim() !== '')
   );
 
-  const canGeneratePdf = isShipmentValid && hasEquipmentData;
+  const canGeneratePdf = isShipmentValid && hasEquipmentData && areEquipmentRowsValid;
 
   // Generate HTML for PDF/Preview
   const generateHtml = useCallback(async (): Promise<string> => {
     // Generate QRs
+    const shipmentPayload = buildShipmentPayload(shipment);
+
     const rowQrPromises = equipment.map(row =>
       generateQrDataUrl(buildSingleRowPayload(row))
     );
 
-    const rowQrs = await Promise.all(rowQrPromises);
+    const [shipmentQr, ...rowQrs] = await Promise.all([
+      generateQrDataUrl(shipmentPayload),
+      ...rowQrPromises
+    ]);
 
-    return generatePdfHtml(shipment, equipment, rowQrs, logos);
+    return generatePdfHtml(shipment, equipment, shipmentQr, rowQrs, logos);
   }, [shipment, equipment, logos]);
 
   // Handle PDF generation
@@ -165,7 +172,8 @@ const App: React.FC = () => {
         {!canGeneratePdf && (
           <Alert severity="info" sx={{ mb: 2 }}>
             {!isShipmentValid && 'יש למלא את כל שדות המשלוח החובה (מס\' תעודה, לקוח, מועד אספקה). '}
-            {!hasEquipmentData && 'יש להוסיף לפחות שורת ציוד אחת עם נתונים.'}
+            {!areEquipmentRowsValid && 'חובה למלא בכל השורות: שם יצרן, מס׳ יצרן, כמות בדיקה. '}
+            {(!hasEquipmentData && areEquipmentRowsValid) && 'יש להוסיף לפחות שורת ציוד אחת עם נתונים.'}
           </Alert>
         )}
 

@@ -19,7 +19,7 @@ export function buildShipmentPayload(shipment: ShipmentData): string {
     cleanText(shipment.shipmentNumber),
     cleanText(shipment.customer),
     cleanText(shipment.supplyDate),
-    cleanText(shipment.poc),
+    cleanText(`${shipment.pocName} ${shipment.pocPhone}`.trim()),
   ];
 
   return parts.join('|');

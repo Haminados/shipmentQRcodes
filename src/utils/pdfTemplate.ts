@@ -1,10 +1,8 @@
 import type { ShipmentData, EquipmentRow } from '../types';
 
 interface LogoUrls {
-  logoLeft1: string;
   logoLeft2: string;
   logoRight: string;
-  logoRight2: string;
 }
 
 /**
@@ -18,6 +16,7 @@ interface LogoUrls {
 export function generatePdfHtml(
   shipment: ShipmentData,
   equipment: EquipmentRow[],
+  shipmentQrDataUrl: string,
   rowQrDataUrls: string[],
   logos: LogoUrls
 ): string {
@@ -40,20 +39,12 @@ export function generatePdfHtml(
     )
     .join('');
 
-  const logoLeft1Html = logos.logoLeft1
-    ? `<img src="${logos.logoLeft1}" alt="Logo" class="header-logo" />`
-    : `<div class="logo-placeholder">LOGO</div>`;
-
   const logoLeft2Html = logos.logoLeft2
     ? `<img src="${logos.logoLeft2}" alt="Logo" class="header-logo" />`
     : `<div class="logo-placeholder">LOGO</div>`;
 
   const logoRightHtml = logos.logoRight
     ? `<img src="${logos.logoRight}" alt="Logo" class="header-logo" />`
-    : `<div class="logo-placeholder">LOGO</div>`;
-
-  const logoRight2Html = logos.logoRight2
-    ? `<img src="${logos.logoRight2}" alt="Logo" class="header-logo" />`
     : `<div class="logo-placeholder">LOGO</div>`;
 
   return `<!DOCTYPE html>
@@ -188,8 +179,9 @@ export function generatePdfHtml(
     /* === SHIPMENT GRID === */
     .shipment-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 120px 1fr 1fr;
       gap: 12px 30px;
+      align-items: start;
     }
     
     .field-row {
@@ -314,14 +306,12 @@ export function generatePdfHtml(
     <div class="header">
       <div class="header-logos-right">
         ${logoRightHtml}
-        ${logoRight2Html}
       </div>
       <div class="header-title">
         <h1>תעודת משלוח וציוד</h1>
         <h2>SHIPMENT & EQUIPMENT CERTIFICATE</h2>
       </div>
       <div class="header-logos-left">
-        ${logoLeft1Html}
         ${logoLeft2Html}
       </div>
     </div>
@@ -331,6 +321,9 @@ export function generatePdfHtml(
       <div class="section-header">פרטי משלוח</div>
       <div class="section-content">
         <div class="shipment-grid">
+          <div class="qr-col" style="grid-row: span 2; display: flex; align-items: center; justify-content: center;">
+             <img src="${shipmentQrDataUrl}" style="width: 100px; height: 100px;" alt="Shipment QR" />
+          </div>
           <div class="field-row">
             <span class="field-label">לקוח</span>
             <span class="field-value">${escapeHtml(shipment.customer)}</span>
@@ -345,7 +338,7 @@ export function generatePdfHtml(
           </div>
           <div class="field-row">
             <span class="field-label">פרטי POC</span>
-            <span class="field-value">${escapeHtml(shipment.poc) || '—'}</span>
+            <span class="field-value">${escapeHtml(shipment.pocName || '—')} ${shipment.pocPhone ? `(${escapeHtml(shipment.pocPhone)})` : ''}</span>
           </div>
         </div>
       </div>
