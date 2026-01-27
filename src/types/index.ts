@@ -50,16 +50,3 @@ export interface EquipmentColumn {
   width: string;
 }
 
-/**
- * Sticker API exposed via preload
- */
-export interface StickerApi {
-  savePdf: (html: string) => Promise<{ success: boolean; path?: string; error?: string }>;
-  getAssetDataUrl: (name: string) => Promise<string>;
-}
-
-declare global {
-  interface Window {
-    stickerApi: StickerApi;
-  }
-}

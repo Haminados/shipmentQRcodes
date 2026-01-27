@@ -49,23 +49,12 @@ const App: React.FC = () => {
     logoRight: '',
   });
 
-  // Load logos on mount
+  // Load logos on mount - use static paths for web
   useEffect(() => {
-    const loadLogos = async () => {
-      try {
-        const [left2, right] = await Promise.all([
-          window.stickerApi.getAssetDataUrl('logo_left_2.png'),
-          window.stickerApi.getAssetDataUrl('logo_right.png'),
-        ]);
-        setLogos({
-          logoLeft2: left2,
-          logoRight: right,
-        });
-      } catch (error) {
-        console.error('Error loading logos:', error);
-      }
-    };
-    loadLogos();
+    setLogos({
+      logoLeft2: './assets/logo_left_2.png',
+      logoRight: './assets/logo_right.png',
+    });
   }, []);
 
   // Validation
@@ -105,25 +94,26 @@ const App: React.FC = () => {
     return generatePdfHtml(shipment, equipment, shipmentQr, rowQrs, logos);
   }, [shipment, equipment, logos]);
 
-  // Handle PDF generation
+  // Handle PDF generation - open print dialog in browser
   const handleGeneratePdf = async () => {
     if (!canGeneratePdf) return;
 
     setLoading(true);
     try {
       const html = await generateHtml();
-      const result = await window.stickerApi.savePdf(html);
 
-      if (result.success) {
+      // Open a new window with the PDF content for printing
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+      } else {
         setSnackbar({
           open: true,
-          message: `PDF נשמר בהצלחה: ${result.path}`,
-          severity: 'success',
-        });
-      } else if (result.error !== 'Cancelled by user') {
-        setSnackbar({
-          open: true,
-          message: `שגיאה ביצירת PDF: ${result.error}`,
+          message: 'לא ניתן לפתוח חלון הדפסה. בדוק שחוסם חלונות קופצים מושבת.',
           severity: 'error',
         });
       }

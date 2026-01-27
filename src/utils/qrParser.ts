@@ -6,9 +6,9 @@ import type { ShipmentData, EquipmentRow } from '../types';
  * QR Format: "1|{shipmentNumber}|{customer}|{supplyDate}|{poc}"
  * 
  * @example
- * const qr = "1|345|45|07/01/2026|אטו";
+ * const qr = "1|345|45|07/01/2026|אטו 0501234567";
  * const data = parseShipmentQr(qr);
- * // Returns: { shipmentNumber: "345", customer: "45", supplyDate: "07/01/2026", poc: "אטו" }
+ * // Returns: { shipmentNumber: "345", customer: "45", supplyDate: "07/01/2026", pocName: "אטו", pocPhone: "0501234567" }
  * 
  * @param qrPayload - The scanned QR code string
  * @returns ShipmentData object or null if invalid format
@@ -25,11 +25,27 @@ export function parseShipmentQr(qrPayload: string): ShipmentData | null {
     return null;
   }
 
+  // Parse POC: may be "Name Phone" format
+  const pocRaw = parts[4] || '';
+  const pocParts = pocRaw.trim().split(/\s+/);
+  // If there are multiple words, last one might be phone
+  let pocName = pocRaw;
+  let pocPhone = '';
+  if (pocParts.length > 1) {
+    const lastPart = pocParts[pocParts.length - 1];
+    // Check if last part looks like a phone number (only digits)
+    if (/^\d+$/.test(lastPart)) {
+      pocPhone = lastPart;
+      pocName = pocParts.slice(0, -1).join(' ');
+    }
+  }
+
   return {
     shipmentNumber: parts[1] || '',
     customer: parts[2] || '',
     supplyDate: parts[3] || '',
-    poc: parts[4] || '', // May be empty
+    pocName,
+    pocPhone,
   };
 }
 
@@ -74,7 +90,7 @@ export function parseEquipmentQr(qrPayload: string): EquipmentRow[] | null {
 
   // Split by ^ to get rows (first element is "2")
   const rowStrings = qrPayload.split('^');
-  
+
   if (rowStrings.length < 2) {
     return []; // No equipment rows
   }
@@ -87,7 +103,7 @@ export function parseEquipmentQr(qrPayload: string): EquipmentRow[] | null {
     if (!rowString) continue;
 
     const columns = rowString.split('|');
-    
+
     // Each row should have 9 columns
     equipmentRows.push({
       id: i, // Generate internal ID
@@ -134,7 +150,7 @@ export function detectQrType(qrPayload: string): 'shipment' | 'equipment' | 'unk
   if (qrPayload.startsWith('1|')) {
     return 'shipment';
   }
-  
+
   if (qrPayload.startsWith('2')) {
     return 'equipment';
   }
