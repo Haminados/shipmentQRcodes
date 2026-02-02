@@ -94,28 +94,20 @@ ipcMain.handle('get-asset-data-url', async (_event: IpcMainInvokeEvent, assetNam
 });
 
 // IPC Handler: Save PDF
-ipcMain.handle('save-pdf', async (_event: IpcMainInvokeEvent, htmlContent: string): Promise<{ success: boolean; path?: string; error?: string }> => {
+ipcMain.handle('save-pdf', async (_event: IpcMainInvokeEvent, payload: any): Promise<{ success: boolean; path?: string; error?: string }> => {
   try {
-    // Show save dialog first
-    // Show save dialog first
-    // If htmlContent starts with a special marker, we could parse metadata,
-    // but cleaner is to change signature. However, for quick fix without changing signature:
-    // We'll rely on the renderer passing the filename or we default to timestamp.
-    // Actually, to pass filename, we should update the IPC arguments.
-    // Let's check how it's called in preload/App.
+    // Payload comes as an object from preload
+    const { html, filename } = payload;
 
-    // For now, let's assume the renderer sends a JSON string with { html, filename }
-    // OR we just use a heuristic.
-    // Wait, simpler: let's update the signature in main.ts to expect (event, payload)
+    // Sanitize filename or use timestamp default
+    let defaultName = `shipment-${Date.now()}`;
+    if (filename && typeof filename === 'string' && filename.trim()) {
+      // Keep Hebrew, English, numbers, spaces, dashes
+      const sanitized = filename.trim().replace(/[\\/:*?"<>|]/g, '-');
+      defaultName = `shipment-${sanitized}`;
+    }
 
-    // But first, let's look at the implementation plan again.
-    // The plan said: "Update the save-pdf IPC handler to accept a suggested filename."
-
-    // Changing args...
-    // The preload exposes: savePdf: (html: string) => ...
-    // We should change preload too if we change main.
-
-    const defaultPath = `shipment-${Date.now()}.pdf`;
+    const defaultPath = `${defaultName}.pdf`;
 
     const result = await dialog.showSaveDialog(mainWindow!, {
       title: 'שמור PDF',
@@ -141,7 +133,7 @@ ipcMain.handle('save-pdf', async (_event: IpcMainInvokeEvent, htmlContent: strin
     });
 
     // Load HTML content
-    await pdfWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+    await pdfWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
 
     // Wait for content to render
     await new Promise(resolve => setTimeout(resolve, 500));
