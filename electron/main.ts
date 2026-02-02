@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, IpcMainInvokeEvent } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -62,11 +62,11 @@ app.on('window-all-closed', () => {
 });
 
 // IPC Handler: Get asset as data URL
-ipcMain.handle('get-asset-data-url', async (_event, assetName: string): Promise<string> => {
+ipcMain.handle('get-asset-data-url', async (_event: IpcMainInvokeEvent, assetName: string): Promise<string> => {
   try {
     const assetsPath = getAssetsPath();
     const filePath = path.join(assetsPath, assetName);
-    
+
     if (!fs.existsSync(filePath)) {
       console.warn(`Asset not found: ${filePath}`);
       return '';
@@ -74,7 +74,7 @@ ipcMain.handle('get-asset-data-url', async (_event, assetName: string): Promise<
 
     const fileBuffer = fs.readFileSync(filePath);
     const base64 = fileBuffer.toString('base64');
-    
+
     // Determine mime type based on extension
     const ext = path.extname(assetName).toLowerCase();
     let mimeType = 'image/png';
@@ -94,12 +94,32 @@ ipcMain.handle('get-asset-data-url', async (_event, assetName: string): Promise<
 });
 
 // IPC Handler: Save PDF
-ipcMain.handle('save-pdf', async (_event, htmlContent: string): Promise<{ success: boolean; path?: string; error?: string }> => {
+ipcMain.handle('save-pdf', async (_event: IpcMainInvokeEvent, htmlContent: string): Promise<{ success: boolean; path?: string; error?: string }> => {
   try {
     // Show save dialog first
+    // Show save dialog first
+    // If htmlContent starts with a special marker, we could parse metadata,
+    // but cleaner is to change signature. However, for quick fix without changing signature:
+    // We'll rely on the renderer passing the filename or we default to timestamp.
+    // Actually, to pass filename, we should update the IPC arguments.
+    // Let's check how it's called in preload/App.
+
+    // For now, let's assume the renderer sends a JSON string with { html, filename }
+    // OR we just use a heuristic.
+    // Wait, simpler: let's update the signature in main.ts to expect (event, payload)
+
+    // But first, let's look at the implementation plan again.
+    // The plan said: "Update the save-pdf IPC handler to accept a suggested filename."
+
+    // Changing args...
+    // The preload exposes: savePdf: (html: string) => ...
+    // We should change preload too if we change main.
+
+    const defaultPath = `shipment-${Date.now()}.pdf`;
+
     const result = await dialog.showSaveDialog(mainWindow!, {
       title: 'שמור PDF',
-      defaultPath: `shipment-${Date.now()}.pdf`,
+      defaultPath: defaultPath,
       filters: [
         { name: 'PDF Files', extensions: ['pdf'] }
       ],

@@ -54,7 +54,7 @@ export interface EquipmentColumn {
  * Sticker API exposed via preload
  */
 export interface StickerApi {
-  savePdf: (html: string) => Promise<{ success: boolean; path?: string; error?: string }>;
+  savePdf: (html: string, filename?: string) => Promise<{ success: boolean; path?: string; error?: string }>;
   getAssetDataUrl: (name: string) => Promise<string>;
 }
 

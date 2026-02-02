@@ -216,7 +216,7 @@ export function generatePdfHtml(
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      font-size: 9px;
+      font-size: 11px;
       border-radius: 6px;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -225,10 +225,11 @@ export function generatePdfHtml(
     .equipment-table th {
       background: linear-gradient(180deg, #0f4c75 0%, #1a5f7a 100%);
       color: #fff;
-      padding: 10px 6px;
+      color: #fff;
+      padding: 12px 6px;
       font-weight: 600;
       text-align: center;
-      font-size: 9px;
+      font-size: 11px;
       border-left: 1px solid rgba(255,255,255,0.1);
     }
     
@@ -242,11 +243,11 @@ export function generatePdfHtml(
     }
     
     .equipment-table td {
-      padding: 8px 6px;
+      padding: 12px 6px;
       text-align: center;
       border-bottom: 1px solid #e8eef3;
       border-left: 1px solid #e8eef3;
-      font-size: 9px;
+      font-size: 11px;
     }
     
     .equipment-table td:last-child {

@@ -8,8 +8,8 @@ contextBridge.exposeInMainWorld('stickerApi', {
    * @param html - The HTML content to convert to PDF
    * @returns Promise with success status and file path
    */
-  savePdf: (html: string): Promise<{ success: boolean; path?: string; error?: string }> => {
-    return ipcRenderer.invoke('save-pdf', html);
+  savePdf: (html: string, filename?: string): Promise<{ success: boolean; path?: string; error?: string }> => {
+    return ipcRenderer.invoke('save-pdf', { html, filename });
   },
 
   /**

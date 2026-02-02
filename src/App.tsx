@@ -112,7 +112,9 @@ const App: React.FC = () => {
     setLoading(true);
     try {
       const html = await generateHtml();
-      const result = await window.stickerApi.savePdf(html);
+      // Pass shipment number as filename (or undefined if empty, though validation prevents that)
+      const filename = shipment.shipmentNumber.trim() || undefined;
+      const result = await window.stickerApi.savePdf(html, filename);
 
       if (result.success) {
         setSnackbar({
