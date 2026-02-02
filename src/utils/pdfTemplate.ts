@@ -64,7 +64,8 @@ export function generatePdfHtml(
     
     body {
       font-family: 'Heebo', 'Arial', sans-serif;
-      font-size: 11px;
+      font-family: 'Heebo', 'Arial', sans-serif;
+      font-size: 14px;
       direction: rtl;
       background: #fff;
       color: #1a1a2e;
@@ -216,7 +217,8 @@ export function generatePdfHtml(
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      font-size: 9px;
+      border-spacing: 0;
+      font-size: 12px;
       border-radius: 6px;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -228,7 +230,9 @@ export function generatePdfHtml(
       padding: 10px 6px;
       font-weight: 600;
       text-align: center;
-      font-size: 9px;
+      font-weight: 600;
+      text-align: center;
+      font-size: 11px;
       border-left: 1px solid rgba(255,255,255,0.1);
     }
     
@@ -242,11 +246,11 @@ export function generatePdfHtml(
     }
     
     .equipment-table td {
-      padding: 8px 6px;
+      padding: 12px 6px;
       text-align: center;
       border-bottom: 1px solid #e8eef3;
       border-left: 1px solid #e8eef3;
-      font-size: 9px;
+      font-size: 12px;
     }
     
     .equipment-table td:last-child {

@@ -94,7 +94,7 @@ const App: React.FC = () => {
     return generatePdfHtml(shipment, equipment, shipmentQr, rowQrs, logos);
   }, [shipment, equipment, logos]);
 
-  // Handle PDF generation - open print dialog in browser
+  // Handle PDF generation - open print dialog in browser or use Electron API
   const handleGeneratePdf = async () => {
     if (!canGeneratePdf) return;
 
@@ -102,20 +102,34 @@ const App: React.FC = () => {
     try {
       const html = await generateHtml();
 
-      // Open a new window with the PDF content for printing
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(html);
-        printWindow.document.close();
-        printWindow.onload = () => {
-          printWindow.print();
-        };
+      // Check if running in Electron
+      if (window.stickerApi) {
+        const result = await window.stickerApi.savePdf(html, shipment.shipmentNumber);
+        if (result.success) {
+          setSnackbar({
+            open: true,
+            message: `הקובץ נשמר בהצלחה: ${result.path}`,
+            severity: 'success',
+          });
+        } else if (result.error !== 'Cancelled by user') {
+          throw new Error(result.error);
+        }
       } else {
-        setSnackbar({
-          open: true,
-          message: 'לא ניתן לפתוח חלון הדפסה. בדוק שחוסם חלונות קופצים מושבת.',
-          severity: 'error',
-        });
+        // Fallback for web: Open a new window with the PDF content for printing
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(html);
+          printWindow.document.close();
+          printWindow.onload = () => {
+            printWindow.print();
+          };
+        } else {
+          setSnackbar({
+            open: true,
+            message: 'לא ניתן לפתוח חלון הדפסה. בדוק שחוסם חלונות קופצים מושבת.',
+            severity: 'error',
+          });
+        }
       }
     } catch (error) {
       setSnackbar({

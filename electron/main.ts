@@ -66,7 +66,7 @@ ipcMain.handle('get-asset-data-url', async (_event, assetName: string): Promise<
   try {
     const assetsPath = getAssetsPath();
     const filePath = path.join(assetsPath, assetName);
-    
+
     if (!fs.existsSync(filePath)) {
       console.warn(`Asset not found: ${filePath}`);
       return '';
@@ -74,7 +74,7 @@ ipcMain.handle('get-asset-data-url', async (_event, assetName: string): Promise<
 
     const fileBuffer = fs.readFileSync(filePath);
     const base64 = fileBuffer.toString('base64');
-    
+
     // Determine mime type based on extension
     const ext = path.extname(assetName).toLowerCase();
     let mimeType = 'image/png';
@@ -94,12 +94,14 @@ ipcMain.handle('get-asset-data-url', async (_event, assetName: string): Promise<
 });
 
 // IPC Handler: Save PDF
-ipcMain.handle('save-pdf', async (_event, htmlContent: string): Promise<{ success: boolean; path?: string; error?: string }> => {
+ipcMain.handle('save-pdf', async (_event, htmlContent: string, shipmentNumber?: string): Promise<{ success: boolean; path?: string; error?: string }> => {
   try {
     // Show save dialog first
+    const defaultFilename = shipmentNumber ? `shipment-${shipmentNumber}.pdf` : `shipment-${Date.now()}.pdf`;
+
     const result = await dialog.showSaveDialog(mainWindow!, {
       title: 'שמור PDF',
-      defaultPath: `shipment-${Date.now()}.pdf`,
+      defaultPath: defaultFilename,
       filters: [
         { name: 'PDF Files', extensions: ['pdf'] }
       ],
