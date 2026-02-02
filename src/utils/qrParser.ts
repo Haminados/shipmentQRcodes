@@ -29,7 +29,8 @@ export function parseShipmentQr(qrPayload: string): ShipmentData | null {
     shipmentNumber: parts[1] || '',
     customer: parts[2] || '',
     supplyDate: parts[3] || '',
-    poc: parts[4] || '', // May be empty
+    pocName: parts[4] || '',
+    pocPhone: '', // Combined in QR, stored in name for legacy support
   };
 }
 
@@ -74,7 +75,7 @@ export function parseEquipmentQr(qrPayload: string): EquipmentRow[] | null {
 
   // Split by ^ to get rows (first element is "2")
   const rowStrings = qrPayload.split('^');
-  
+
   if (rowStrings.length < 2) {
     return []; // No equipment rows
   }
@@ -87,7 +88,7 @@ export function parseEquipmentQr(qrPayload: string): EquipmentRow[] | null {
     if (!rowString) continue;
 
     const columns = rowString.split('|');
-    
+
     // Each row should have 9 columns
     equipmentRows.push({
       id: i, // Generate internal ID
@@ -134,7 +135,7 @@ export function detectQrType(qrPayload: string): 'shipment' | 'equipment' | 'unk
   if (qrPayload.startsWith('1|')) {
     return 'shipment';
   }
-  
+
   if (qrPayload.startsWith('2')) {
     return 'equipment';
   }

@@ -179,9 +179,9 @@ export function generatePdfHtml(
     /* === SHIPMENT GRID === */
     .shipment-grid {
       display: grid;
-      grid-template-columns: 120px 1fr 1fr;
-      gap: 12px 30px;
-      align-items: start;
+      grid-template-columns: 140px 1fr 1fr;
+      gap: 12px 20px;
+      align-items: center;
     }
     
     .field-row {
@@ -190,14 +190,13 @@ export function generatePdfHtml(
       background: #fff;
       border: 1px solid #e2e8f0;
       border-radius: 6px;
-      overflow: hidden;
     }
     
     .field-label {
       font-weight: 600;
       color: #0f4c75;
       padding: 10px 14px;
-      min-width: 130px;
+      min-width: 110px;
       background: #e8f4f8;
       border-left: 1px solid #e2e8f0;
       font-size: 11px;
@@ -209,6 +208,7 @@ export function generatePdfHtml(
       font-size: 12px;
       font-weight: 500;
       color: #1a1a2e;
+      white-space: nowrap;
     }
     
     /* === EQUIPMENT TABLE === */
@@ -322,8 +322,8 @@ export function generatePdfHtml(
       <div class="section-header">פרטי משלוח</div>
       <div class="section-content">
         <div class="shipment-grid">
-          <div class="qr-col" style="grid-row: span 2; display: flex; align-items: center; justify-content: center;">
-             <img src="${shipmentQrDataUrl}" style="width: 100px; height: 100px;" alt="Shipment QR" />
+          <div class="qr-col" style="grid-row: span 2; display: flex; align-items: center; justify-content: center; padding-left: 10px;">
+             <img src="${shipmentQrDataUrl}" style="width: 110px; height: 110px; image-rendering: pixelated;" alt="Shipment QR" />
           </div>
           <div class="field-row">
             <span class="field-label">לקוח</span>
@@ -338,8 +338,12 @@ export function generatePdfHtml(
             <span class="field-value">${escapeHtml(shipment.supplyDate)}</span>
           </div>
           <div class="field-row">
-            <span class="field-label">פרטי POC</span>
-            <span class="field-value">${escapeHtml(shipment.pocName || '—')} ${shipment.pocPhone ? `(${escapeHtml(shipment.pocPhone)})` : ''}</span>
+            <span class="field-label">POC - שם</span>
+            <span class="field-value">${escapeHtml(shipment.pocName || '—')}</span>
+          </div>
+          <div class="field-row" style="grid-column: span 3;">
+            <span class="field-label">POC - טלפון</span>
+            <span class="field-value" style="font-size: 14px; font-weight: 700;">${escapeHtml(shipment.pocPhone || '—')}</span>
           </div>
         </div>
       </div>

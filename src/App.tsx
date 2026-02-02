@@ -49,9 +49,9 @@ const App: React.FC = () => {
     logoRight: '',
   });
 
-  // Load logos on mount
   useEffect(() => {
     const loadLogos = async () => {
+      if (!window.stickerApi) return;
       try {
         const [left2, right] = await Promise.all([
           window.stickerApi.getAssetDataUrl('logo_left_2.png'),
@@ -112,22 +112,41 @@ const App: React.FC = () => {
     setLoading(true);
     try {
       const html = await generateHtml();
-      // Pass shipment number as filename (or undefined if empty, though validation prevents that)
-      const filename = shipment.shipmentNumber.trim() || undefined;
-      const result = await window.stickerApi.savePdf(html, filename);
+      // Check if running in Electron
+      if (window.stickerApi) {
+        // Pass shipment number as filename
+        const filename = shipment.shipmentNumber.trim() || undefined;
+        const result = await window.stickerApi.savePdf(html, filename);
 
-      if (result.success) {
-        setSnackbar({
-          open: true,
-          message: `PDF נשמר בהצלחה: ${result.path}`,
-          severity: 'success',
-        });
-      } else if (result.error !== 'Cancelled by user') {
-        setSnackbar({
-          open: true,
-          message: `שגיאה ביצירת PDF: ${result.error}`,
-          severity: 'error',
-        });
+        if (result.success) {
+          setSnackbar({
+            open: true,
+            message: `PDF נשמר בהצלחה: ${result.path}`,
+            severity: 'success',
+          });
+        } else if (result.error !== 'Cancelled by user') {
+          setSnackbar({
+            open: true,
+            message: `שגיאה ביצירת PDF: ${result.error}`,
+            severity: 'error',
+          });
+        }
+      } else {
+        // Fallback for web: Open a new window with the PDF content for printing
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(html);
+          printWindow.document.close();
+          printWindow.onload = () => {
+            printWindow.print();
+          };
+        } else {
+          setSnackbar({
+            open: true,
+            message: 'לא ניתן לפתוח חלון הדפסה. בדוק שחוסם חלונות קופצים מושבת.',
+            severity: 'error',
+          });
+        }
       }
     } catch (error) {
       setSnackbar({
