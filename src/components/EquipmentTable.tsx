@@ -31,12 +31,12 @@ interface EquipmentTableProps {
 
 // Column definitions in display order (RTL)
 const columns: EquipmentColumn[] = [
-  { key: 'rowNum', header: 'מס"ד', width: '60px' },
+  { key: 'rowNum', header: 'מס"ד', width: '50px' },
   { key: 'manufacturerNum', header: 'מס\' יצרן *', width: '90px' },
   { key: 'manufacturerName', header: 'שם יצרן *', width: '100px' },
-  { key: 'equipmentVersion', header: 'גרסת הציוד', width: '90px' },
-  { key: 'idfCatalog', header: 'מק"ט צהלי', width: '100px' },
-  { key: 'serialNum', header: 'מס\' סיריאלי', width: '100px' },
+  { key: 'equipmentVersion', header: 'גרסת הציוד', width: '80px' },
+  { key: 'idfCatalog', header: 'מק"ט צ״הלי', width: '100px' },
+  { key: 'serialNum', header: 'מס\' סריאלי', width: '100px' },
   { key: 'purchaseQty', header: 'כמות רכש', width: '80px' },
   { key: 'testQty', header: 'כמות לבדיקה *', width: '80px' },
   { key: 'purchaseOrder', header: 'הזמנת רכש', width: '100px' },
@@ -99,6 +99,13 @@ const EquipmentTable: React.FC<EquipmentTableProps> = ({
     value: string
   ) => {
     let updatedValue = value;
+
+    // Validate idfCatalog: numbers only
+    if (field === 'idfCatalog') {
+      if (!/^\d*$/.test(value)) {
+        return;
+      }
+    }
 
     // If serial number is being updated and has value, force quantities to 1
     if (field === 'serialNum' && value.trim() !== '') {
@@ -260,9 +267,16 @@ const EquipmentTable: React.FC<EquipmentTableProps> = ({
                               padding: '6px 8px',
                               fontSize: '13px',
                             },
+                            maxLength:
+                              col.key === 'equipmentVersion' || col.key === 'idfCatalog'
+                                ? 9
+                                : undefined,
+                            inputMode: col.key === 'idfCatalog' ? 'numeric' : 'text',
                           }}
                           error={
-                            (col.key === 'manufacturerNum' || col.key === 'manufacturerName' || col.key === 'testQty') &&
+                            (col.key === 'manufacturerNum' ||
+                              col.key === 'manufacturerName' ||
+                              col.key === 'testQty') &&
                             row[col.key].trim() === ''
                           }
                         />
@@ -297,8 +311,9 @@ const EquipmentTable: React.FC<EquipmentTableProps> = ({
           </Table>
         </TableContainer>
         {equipment.length > 0 && (
-          <Box sx={{ mt: 1, textAlign: 'left', color: 'text.secondary', fontSize: '12px' }}>
-            סה"כ שורות: {equipment.length}
+          <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between', color: 'text.secondary', fontSize: '12px' }}>
+            <span>*-שדה חובה</span>
+            <span>סה"כ שורות: {equipment.length}</span>
           </Box>
         )}
       </CardContent>

@@ -39,7 +39,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
             startIcon={<PreviewIcon />}
             onClick={onPreview}
             disabled={!canGenerate || loading}
-            sx={{ 
+            sx={{
               bgcolor: 'rgba(255,255,255,0.15)',
               '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' }
             }}
@@ -53,12 +53,12 @@ const AppHeader: React.FC<AppHeaderProps> = ({
             startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <PictureAsPdfIcon />}
             onClick={onGeneratePdf}
             disabled={!canGenerate || loading}
-            sx={{ 
+            sx={{
               bgcolor: '#4caf50',
               '&:hover': { bgcolor: '#45a049' }
             }}
           >
-            צור PDF
+            צור תעודת משלוח
           </Button>
         </Box>
       </Toolbar>

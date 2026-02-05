@@ -6,6 +6,7 @@ import {
   TextField,
   Button,
   Grid,
+  Box,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import type { ShipmentData } from '../types';
@@ -82,17 +83,8 @@ const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, onChange }) => {
       />
       <CardContent>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
-            <TextField
-              fullWidth
-              label="מס' תעודת משלוח"
-              value={shipment.shipmentNumber}
-              onChange={handleChange('shipmentNumber')}
-              required
-              placeholder="הזן מספר משלוח"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          {/* Row 1: Customer, Date, POC Name, POC Phone */}
+          <Grid item xs={6} sm={6} md={3}>
             <TextField
               fullWidth
               label="לקוח"
@@ -103,10 +95,10 @@ const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, onChange }) => {
               inputProps={{ maxLength: 3, inputMode: 'numeric' }}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={3}>
             <TextField
               fullWidth
-              label="מועד אספקת ציוד"
+              label="מועד הפקת תעודת משלוח"
               type="date"
               value={getDateInputValue()}
               onChange={handleDateChange}
@@ -115,7 +107,7 @@ const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, onChange }) => {
               helperText="DD/MM/YYYY"
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={3}>
             <TextField
               fullWidth
               label="POC - שם"
@@ -124,14 +116,34 @@ const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, onChange }) => {
               placeholder="שם איש קשר"
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={3}>
             <TextField
               fullWidth
               label="POC - טלפון"
               value={shipment.pocPhone}
-              onChange={handleChange('pocPhone')}
-              placeholder="טלפון איש קשר"
+              onChange={(e) => {
+                const val = e.target.value;
+                if (/^\d{0,10}$/.test(val)) {
+                  onChange({ ...shipment, pocPhone: val });
+                }
+              }}
+              placeholder="מספרים בלבד"
+              inputProps={{ maxLength: 10, inputMode: 'numeric' }}
             />
+          </Grid>
+
+          {/* Row 2: Shipment Number (Centered) */}
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' } }}>
+              <TextField
+                fullWidth
+                label="מס' תעודת משלוח"
+                value={shipment.shipmentNumber}
+                onChange={handleChange('shipmentNumber')}
+                required
+                placeholder="הזן מספר משלוח"
+              />
+            </Box>
           </Grid>
         </Grid>
       </CardContent>
