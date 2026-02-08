@@ -229,7 +229,8 @@ export function generatePdfHtml(
       font-size: 9px; /* Reduced from 11px */
       border-left: 1px solid #000;
       border-bottom: 1px solid #000;
-      white-space: nowrap; /* Prevent wrapping in headers if possible */
+      white-space: normal; /* Allow wrapping to two lines */
+      line-height: 1.2;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -338,14 +339,26 @@ export function generatePdfHtml(
       <div class="section-header">פרטי ציוד</div>
       <div class="section-content" style="padding: 0;">
         <table class="equipment-table">
+          <colgroup>
+            <col style="width: 4%;"> <!-- מס"ד - narrower -->
+            <col style="width: 14%;"> <!-- מס' יצרן - wider -->
+            <col style="width: 12%;"> <!-- שם יצרן - wider -->
+            <col style="width: 7%;"> <!-- גרסת הציוד - narrower -->
+            <col style="width: 10%;"> <!-- מק"ט צה"לי -->
+            <col style="width: 14%;"> <!-- מס' סריאלי - wider -->
+            <col style="width: 6%;"> <!-- כמות רכש - narrower -->
+            <col style="width: 6%;"> <!-- כמות לבדיקה - narrower -->
+            <col style="width: 12%;"> <!-- הזמנת רכש -->
+            <col style="width: 15%;"> <!-- QR -->
+          </colgroup>
           <thead>
             <tr>
               <th>מס"ד</th>
               <th>מס' יצרן</th>
               <th>שם יצרן</th>
               <th>גרסת הציוד</th>
-              <th>מק"ט צהלי</th>
-              <th>מס' סיריאלי</th>
+              <th>מק"ט צה"לי</th>
+              <th>מס' סריאלי</th>
               <th>כמות רכש</th>
               <th>כמות לבדיקה</th>
               <th>הזמנת רכש</th>
