@@ -102,7 +102,7 @@ const App: React.FC = () => {
       ...rowQrPromises
     ]);
 
-    return generatePdfHtml(shipment, equipment, shipmentQr, rowQrs, logos);
+    return generatePdfHtml(shipment, equipment, shipmentQr, rowQrs, logos, __APP_VERSION__);
   }, [shipment, equipment, logos]);
 
   // Handle PDF generation
@@ -180,7 +180,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
       <AppHeader
         onGeneratePdf={handleGeneratePdf}
         onPreview={handlePreview}
@@ -188,7 +188,7 @@ const App: React.FC = () => {
         loading={loading}
       />
 
-      <Container maxWidth="xl" sx={{ pb: 4 }}>
+      <Container component="main" maxWidth="xl" sx={{ pb: 4, flex: 1 }}>
         {/* Validation Alert */}
         {!canGeneratePdf && (
           <Alert severity="info" sx={{ mb: 2 }}>
@@ -232,6 +232,20 @@ const App: React.FC = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      <Box
+        component="footer"
+        sx={{
+          py: 2,
+          textAlign: 'center',
+          color: 'text.secondary',
+          fontSize: '0.75rem',
+          borderTop: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+        }}
+      >
+        Barcode Generator v{__APP_VERSION__}
+      </Box>
     </Box>
   );
 };

@@ -11,7 +11,10 @@
     "dev:electron": "npx wait-on http://localhost:5173 && node node_modules/typescript/bin/tsc -p tsconfig.electron.json && npx electron .",
     "build": "node node_modules/typescript/bin/tsc -p tsconfig.electron.json && node node_modules/vite/bin/vite.js build",
     "dist": "npm run build && node node_modules/electron-builder/cli.js",
-    "type-check": "node node_modules/typescript/bin/tsc --noEmit"
+    "type-check": "node node_modules/typescript/bin/tsc --noEmit",
+    "bump:patch": "npm version patch",
+    "bump:minor": "npm version minor",
+    "bump:major": "npm version major"
   },
   "dependencies": {
     "@emotion/cache": "11.11.0",

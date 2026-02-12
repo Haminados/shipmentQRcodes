@@ -18,7 +18,8 @@ export function generatePdfHtml(
   equipment: EquipmentRow[],
   shipmentQrDataUrl: string,
   rowQrDataUrls: string[],
-  logos: LogoUrls
+  logos: LogoUrls,
+  version: string
 ): string {
   const equipmentTableRows = equipment
     .map(
@@ -73,7 +74,7 @@ export function generatePdfHtml(
       direction: rtl;
       background: #fff;
       color: #000;
-      padding: 5mm; /* Reduced from 12mm 10mm */
+      padding: 5mm 5mm 15mm 5mm; /* Increased bottom padding for footer */
       line-height: 1.4;
     }
     
@@ -173,12 +174,23 @@ export function generatePdfHtml(
     }
     
     /* === SHIPMENT GRID === */
-    .shipment-grid {
-      display: grid;
-      /* Columns: Content, Content, QR (Left) */
-      grid-template-columns: 1fr 1fr 140px;
-      gap: 12px 20px;
-      align-items: start;
+    .shipment-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    
+    .shipment-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .detail-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
     }
     
     .field-row {
@@ -187,25 +199,30 @@ export function generatePdfHtml(
       background: #fff;
       border: 1px solid #000;
       border-radius: 6px;
+      flex: 1;
+      overflow: hidden;
     }
     
     .field-label {
       font-weight: 600;
       color: #000;
-      padding: 10px 14px;
-      min-width: 110px;
+      padding: 8px 10px;
+      min-width: 90px;
       background: #f0f0f0;
       border-left: 1px solid #000;
       font-size: 11px;
+      white-space: nowrap;
     }
     
     .field-value {
       flex: 1;
-      padding: 10px 14px;
+      padding: 8px 10px;
       font-size: 12px;
       font-weight: 500;
       color: #000;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     /* === EQUIPMENT TABLE === */
@@ -213,11 +230,11 @@ export function generatePdfHtml(
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      font-size: 9px; /* Reduced from 11px */
+      font-size: 9px; /* Increased from 9px */
       border-radius: 6px;
       overflow: hidden;
       border: 1px solid #000;
-      table-layout: fixed; /* Ensure valid width calculation */
+      table-layout: fixed;
     }
     
     .equipment-table th {
@@ -226,10 +243,10 @@ export function generatePdfHtml(
       padding: 6px 4px; /* Reduced padding */
       font-weight: 700;
       text-align: center;
-      font-size: 9px; /* Reduced from 11px */
+      font-size: 14px;
       border-left: 1px solid #000;
       border-bottom: 1px solid #000;
-      white-space: normal; /* Allow wrapping to two lines */
+      white-space: normal;
       line-height: 1.2;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -244,9 +261,9 @@ export function generatePdfHtml(
       text-align: center;
       border-bottom: 1px solid #000;
       border-left: 1px solid #000;
-      font-size: 9px; /* Reduced from 11px */
+      font-size: 14px; /* Increased from 9px */
       color: #000;
-      word-break: break-all; /* Allow breaking long strings */
+      word-break: break-all;
     }
     
     .equipment-table td:last-child {
@@ -259,12 +276,16 @@ export function generatePdfHtml(
     
     /* === FOOTER === */
     .footer {
-      margin-top: 20px;
-      padding-top: 12px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
       border-top: 1px solid #000;
       text-align: center;
       color: #000;
       font-size: 9px;
+      background: #fff;
     }
     
     .row-qr-code {
@@ -300,35 +321,40 @@ export function generatePdfHtml(
     <div class="section">
       <div class="section-header">פרטי משלוח</div>
       <div class="section-content">
-        <div class="shipment-grid">
-          <div class="field-row">
-            <span class="field-label">לקוח</span>
-            <span class="field-value">${escapeHtml(shipment.customer)}</span>
-          </div>
-          <div class="field-row">
-            <span class="field-label">מועד אספקת ציוד</span>
-            <span class="field-value">${escapeHtml(shipment.supplyDate)}</span>
+        <div class="shipment-container">
+          <div class="shipment-details">
+            <!-- Row 1: Client, POC Name, POC Phone -->
+            <div class="detail-row">
+              <div class="field-row">
+                <span class="field-label">לקוח</span>
+                <span class="field-value">${escapeHtml(shipment.customer)}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">POC - שם</span>
+                <span class="field-value">${escapeHtml(shipment.pocName || '—')}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">POC - טלפון</span>
+                <span class="field-value">${escapeHtml(shipment.pocPhone || '—')}</span>
+              </div>
+            </div>
+
+            <!-- Row 2: Supply Date, Shipment Number -->
+            <div class="detail-row">
+              <div class="field-row">
+                <span class="field-label">מועד הפקת תעודת משלוח</span>
+                <span class="field-value">${escapeHtml(shipment.supplyDate)}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">מס' תעודת משלוח</span>
+                <span class="field-value" style="font-weight: 700;">${escapeHtml(shipment.shipmentNumber)}</span>
+              </div>
+            </div>
           </div>
 
-          <!-- QR Code (Left Column, Spans 2 rows) -->
-          <div class="qr-col" style="grid-row: span 2; grid-column: 3; display: flex; align-items: center; justify-content: center; padding-left: 10px;">
-             <img src="${shipmentQrDataUrl}" style="width: 110px; height: 110px; image-rendering: pixelated;" alt="Shipment QR" />
-          </div>
-
-          <div class="field-row">
-            <span class="field-label">POC - שם</span>
-            <span class="field-value">${escapeHtml(shipment.pocName || '—')}</span>
-          </div>
-
-          <div class="field-row">
-            <span class="field-label">POC - טלפון</span>
-            <span class="field-value">${escapeHtml(shipment.pocPhone || '—')}</span>
-          </div>
-
-          <!-- Replaced POC Phone with Shipment Number -->
-          <div class="field-row">
-             <span class="field-label">מס' תעודת משלוח</span>
-             <span class="field-value" style="font-weight: 700;">${escapeHtml(shipment.shipmentNumber)}</span>
+          <!-- QR Code (Left Column) -->
+          <div class="qr-col" style="display: flex; align-items: center; justify-content: center; padding-left: 10px;">
+             <img src="${shipmentQrDataUrl}" style="width: 100px; height: 100px; image-rendering: pixelated;" alt="Shipment QR" />
           </div>
         </div>
       </div>
@@ -344,12 +370,12 @@ export function generatePdfHtml(
             <col style="width: 14%;"> <!-- מס' יצרן - wider -->
             <col style="width: 12%;"> <!-- שם יצרן - wider -->
             <col style="width: 7%;"> <!-- גרסת הציוד - narrower -->
-            <col style="width: 10%;"> <!-- מק"ט צה"לי -->
+            <col style="width: 10%;"> <!-- מק"ט צ״הלי -->
             <col style="width: 14%;"> <!-- מס' סריאלי - wider -->
             <col style="width: 6%;"> <!-- כמות רכש - narrower -->
             <col style="width: 6%;"> <!-- כמות לבדיקה - narrower -->
-            <col style="width: 12%;"> <!-- הזמנת רכש -->
-            <col style="width: 15%;"> <!-- QR -->
+            <col style="width: 15%;"> <!-- הזמנת רכש -->
+            <col style="width: 12%;"> <!-- QR -->
           </colgroup>
           <thead>
             <tr>
@@ -375,7 +401,7 @@ export function generatePdfHtml(
     
     <!-- Footer -->
     <div class="footer">
-      מסמך זה הופק אוטומטית • ${new Date().toLocaleDateString('he-IL')}
+      מסמך זה הופק אוטומטית • ${new Date().toLocaleDateString('he-IL')} • v${version}
     </div>
   </div>
 </body>
