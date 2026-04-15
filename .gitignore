@@ -6,11 +6,21 @@ dist/
 dist-electron/
 release/
 
+# Offline cache (downloaded binaries/resources for offline builds)
+offline_cache/
+
+# Local scripts (machine-specific build helpers)
+scripts/
+
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
 # OS
 .DS_Store
